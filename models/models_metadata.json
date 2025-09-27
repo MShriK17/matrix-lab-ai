@@ -1,0 +1,59 @@
+{
+  "Linear_Regression_v1.0.joblib": {
+    "model_name": "Linear_Regression",
+    "version": 1.0,
+    "algorithm": "Linear Regression",
+    "problem_type": "Regression",
+    "metrics": {
+      "r2_score": 0.897889113628597,
+      "mse": 112.60733295016502,
+      "rmse": 10.61166023533382,
+      "mae": 8.822501638757421,
+      "mape": 4.629837368251684,
+      "cv_mean": 0.8569689961836773,
+      "cv_std": 0.03576924328031738
+    },
+    "training_time": "2025-07-18T18:33:41.105370",
+    "description": "",
+    "tags": [],
+    "best_params": null,
+    "cv_scores": [
+      0.8486937786987555,
+      0.8698221820189347,
+      0.9032420986451019,
+      0.7946016518011281,
+      0.8684852697544658
+    ],
+    "feature_names": [
+      "brand",
+      "model",
+      "battery_capacity_kWh",
+      "battery_type",
+      "number_of_cells",
+      "torque_nm",
+      "efficiency_wh_per_km",
+      "range_km",
+      "acceleration_0_100_s",
+      "fast_charging_power_kw_dc",
+      "fast_charge_port",
+      "towing_capacity_kg",
+      "cargo_volume_l",
+      "seats",
+      "drivetrain",
+      "segment",
+      "length_mm",
+      "width_mm",
+      "height_mm",
+      "car_body_type",
+      "source_url"
+    ],
+    "target_column": "top_speed_kmh",
+    "label_encoders": {},
+    "file_size": 26749,
+    "created_by": "MatrixLab AI Studio",
+    "data_shape": {
+      "n_samples": 264,
+      "n_features": 21
+    }
+  }
+}
