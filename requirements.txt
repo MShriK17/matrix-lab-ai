@@ -9,4 +9,4 @@ altair==5.5.0
 shap==0.48.0
 lime==0.2.0.1
 scikit-image==0.25.2
-ydata-profiling==4.7.0
+ydata-profiling==4.17.0
