@@ -5,55 +5,43 @@
     "algorithm": "Linear Regression",
     "problem_type": "Regression",
     "metrics": {
-      "r2_score": 0.897889113628597,
-      "mse": 112.60733295016502,
-      "rmse": 10.61166023533382,
-      "mae": 8.822501638757421,
-      "mape": 4.629837368251684,
-      "cv_mean": 0.8569689961836773,
-      "cv_std": 0.03576924328031738
+      "r2_score": 0.9992633880676852,
+      "mse": 3201092681237990.5,
+      "rmse": 56578199.69951315,
+      "mae": 38633299.53537258,
+      "mape": 6.524992996263363,
+      "cv_mean": 0.999031145585438,
+      "cv_std": 0.00039929213379809515
     },
-    "training_time": "2025-07-18T18:33:41.105370",
+    "training_time": "2025-09-28T09:08:51.641237",
     "description": "",
     "tags": [],
     "best_params": null,
     "cv_scores": [
-      0.8486937786987555,
-      0.8698221820189347,
-      0.9032420986451019,
-      0.7946016518011281,
-      0.8684852697544658
+      0.9993471507751286,
+      0.9990150919319443,
+      0.9987212508396701,
+      0.9984879521358374,
+      0.9995842822446098
     ],
     "feature_names": [
-      "brand",
-      "model",
-      "battery_capacity_kWh",
-      "battery_type",
-      "number_of_cells",
-      "torque_nm",
-      "efficiency_wh_per_km",
-      "range_km",
-      "acceleration_0_100_s",
-      "fast_charging_power_kw_dc",
-      "fast_charge_port",
-      "towing_capacity_kg",
-      "cargo_volume_l",
-      "seats",
-      "drivetrain",
-      "segment",
-      "length_mm",
-      "width_mm",
-      "height_mm",
-      "car_body_type",
-      "source_url"
+      "SNo",
+      "Name",
+      "Symbol",
+      "Date",
+      "High",
+      "Low",
+      "Open",
+      "Close",
+      "Volume"
     ],
-    "target_column": "top_speed_kmh",
+    "target_column": "Marketcap",
     "label_encoders": {},
-    "file_size": 26749,
+    "file_size": 8237,
     "created_by": "MatrixLab AI Studio",
     "data_shape": {
-      "n_samples": 264,
-      "n_features": 21
+      "n_samples": 275,
+      "n_features": 9
     }
   }
 }

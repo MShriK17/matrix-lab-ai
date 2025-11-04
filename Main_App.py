@@ -115,117 +115,102 @@ if selected_step == 0:
         try:
             # Load data
             df = data_loader.load_file(uploaded_file)
-            
             if df is not None:
-                st.session_state.data = df
-                st.session_state.data_uploaded = True
-                st.success(f"✅ Data loaded successfully! Shape: {df.shape}")
-                
-                # Display basic info
-                st.subheader("📊 Dataset Overview")
-                col1, col2, col3 = st.columns(3)
-                
-                with col1:
-                    st.metric("Rows", f"{df.shape[0]:,}")
-                with col2:
-                    st.metric("Columns", f"{df.shape[1]:,}")
-                with col3:
-                    st.metric("Missing Values", f"{df.isnull().sum().sum():,}")
-                
-                # Data preview
-                st.subheader("🔍 Data Preview")
-                st.dataframe(df.head(10), use_container_width=True)
-                
-                # Data types
-                st.subheader("📋 Column Information")
-                col_info = pd.DataFrame({
-                    'Column': df.columns.tolist(),
-                    'Data Type': df.dtypes.astype(str).tolist(),
-                    'Missing': df.isnull().sum().astype(int).tolist(),
-                    'Unique Values': df.nunique().astype(int).tolist()
-                })
-                st.dataframe(col_info, use_container_width=True)
-                
-                # === DATA VISUALIZATION SECTION ===
-                st.markdown("---")
-                st.subheader("📊 Data Visualization & Analysis")
-                st.markdown("*Explore your data through interactive charts and graphs*")
-                
-                # Create tabs for different visualization categories
-                viz_tab1, viz_tab2, viz_tab3, viz_tab4, viz_tab5 = st.tabs([
-                    "📈 Distribution Plots", 
-                    "🔗 Relationships", 
-                    "📊 Categories", 
-                    "🎯 Missing Data",
-                    "📋 Statistical Overview"
-                ])
-                
-                # Get numeric and categorical columns
-                numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
-                categorical_cols = df.select_dtypes(include=['object', 'category']).columns.tolist()
-                
-                with viz_tab1:
-                    st.markdown("### 📈 Distribution Analysis")
-                    
-                    if numeric_cols:
-                        # Distribution plots for numeric columns
-                        st.markdown("#### Numerical Distributions")
-                        
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            selected_num_col = st.selectbox("Select Column", numeric_cols, key="dist_col")
-                        with col2:
-                            plot_type = st.selectbox("Plot Type", ["histogram", "box", "violin"], key="dist_type")
-                        
-                        if selected_num_col:
-                            fig = visualizer.create_distribution_plot(df, selected_num_col, plot_type)
-                            st.plotly_chart(fig, use_container_width=True)
-                        
-                        # Multi-column distribution grid
-                        st.markdown("#### Feature Distribution Grid")
-                        selected_dist_cols = st.multiselect(
-                            "Select columns for distribution grid", 
-                            numeric_cols, 
-                            default=numeric_cols[:min(6, len(numeric_cols))],
-                            key="dist_grid_cols"
-                        )
-                        
-                        if selected_dist_cols:
-                            fig_grid = visualizer.create_feature_distribution_grid(df, selected_dist_cols)
-                            if fig_grid:
-                                st.plotly_chart(fig_grid, use_container_width=True)
-                    else:
-                        st.info("No numerical columns found for distribution analysis")
-                
-                with viz_tab2:
-                    st.markdown("### 🔗 Relationship Analysis")
-                    
-                    if len(numeric_cols) >= 2:
-                        # Correlation heatmap
-                        st.markdown("#### Correlation Matrix")
-                        fig_corr = visualizer.create_correlation_heatmap(df)
-                        if fig_corr:
-                            st.plotly_chart(fig_corr, use_container_width=True)
-                        
-                        # Scatter plots
-                        st.markdown("#### Scatter Plot Analysis")
-                        col1, col2, col3 = st.columns(3)
-                        
-                        with col1:
-                            x_col = st.selectbox("X-axis", numeric_cols, key="scatter_x")
-                        with col2:
-                            y_col = st.selectbox("Y-axis", [col for col in numeric_cols if col != x_col], key="scatter_y")
-                        with col3:
-                            color_col = st.selectbox("Color by (optional)", 
-                                                   [None] + categorical_cols + numeric_cols, 
-                                                   key="scatter_color")
-                        
-                        if x_col and y_col:
-                            fig_scatter = visualizer.create_scatter_plot(df, x_col, y_col, color_col)
-                            st.plotly_chart(fig_scatter, use_container_width=True)
-                        
-                        # Pairplot for selected columns
+                # Validate data
+                validation = data_loader.validate_data(df)
+                if not validation['is_valid']:
+                    st.error(f"❌ Data validation failed: {', '.join(validation['errors'])}")
+                else:
+                    st.session_state.data = df
+                    st.session_state.data_uploaded = True
+                    st.success(f"✅ Data loaded successfully! Shape: {df.shape}")
+                    # Display basic info
+                    st.subheader("📊 Dataset Overview")
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        st.metric("Rows", f"{df.shape[0]:,}")
+                    with col2:
+                        st.metric("Columns", f"{df.shape[1]:,}")
+                    with col3:
+                        st.metric("Missing Values", f"{df.isnull().sum().sum():,}")
+                    # Data preview
+                    st.subheader("🔍 Data Preview")
+                    st.dataframe(df.head(10), use_container_width=True)
+                    # Data types
+                    st.subheader("📋 Column Information")
+                    try:
+                        col_info = pd.DataFrame({
+                            'Column': df.columns.tolist(),
+                            'Data Type': df.dtypes.astype(str).tolist(),
+                            'Missing': df.isnull().sum().astype(int).tolist(),
+                            'Unique Values': df.nunique().astype(int).tolist()
+                        })
+                        st.dataframe(col_info, use_container_width=True)
+                    except Exception as e:
+                        st.error(f"Error displaying column info: {str(e)}")
+                    # === DATA VISUALIZATION SECTION ===
+                    st.markdown("---")
+                    st.subheader("📊 Data Visualization & Analysis")
+                    st.markdown("*Explore your data through interactive charts and graphs*")
+                    # Create tabs for different visualization categories
+                    viz_tab1, viz_tab2, viz_tab3, viz_tab4, viz_tab5 = st.tabs([
+                        "📈 Distribution Plots", 
+                        "🔗 Relationships", 
+                        "📊 Categories", 
+                        "🎯 Missing Data",
+                        "📋 Statistical Overview"
+                    ])
+                    # Get numeric and categorical columns
+                    numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
+                    categorical_cols = df.select_dtypes(include=['object', 'category']).columns.tolist()
+                    with viz_tab1:
+                        st.markdown("### 📈 Distribution Analysis")
+                        if numeric_cols:
+                            # Distribution plots for numeric columns
+                            st.markdown("#### Numerical Distributions")
+                            col1, col2 = st.columns(2)
+                            with col1:
+                                selected_num_col = st.selectbox("Select Column", numeric_cols, key="dist_col")
+                            with col2:
+                                plot_type = st.selectbox("Plot Type", ["histogram", "box", "violin"], key="dist_type")
+                            if selected_num_col:
+                                fig = visualizer.create_distribution_plot(df, selected_num_col, plot_type)
+                                st.plotly_chart(fig, use_container_width=True)
+                            # Multi-column distribution grid
+                            st.markdown("#### Feature Distribution Grid")
+                            selected_dist_cols = st.multiselect(
+                                "Select columns for distribution grid", 
+                                numeric_cols, 
+                                default=numeric_cols[:min(6, len(numeric_cols))],
+                                key="dist_grid_cols"
+                            )
+                            if selected_dist_cols:
+                                fig_grid = visualizer.create_feature_distribution_grid(df, selected_dist_cols)
+                                if fig_grid:
+                                    st.plotly_chart(fig_grid, use_container_width=True)
+                        else:
+                            st.info("No numerical columns found for distribution analysis")
+                    with viz_tab2:
+                        st.markdown("### 🔗 Relationship Analysis")
                         if len(numeric_cols) >= 2:
+                            # Correlation heatmap
+                            st.markdown("#### Correlation Matrix")
+                            fig_corr = visualizer.create_correlation_heatmap(df)
+                            if fig_corr:
+                                st.plotly_chart(fig_corr, use_container_width=True)
+                            # Scatter plots
+                            st.markdown("#### Scatter Plot Analysis")
+                            col1, col2, col3 = st.columns(3)
+                            with col1:
+                                x_col = st.selectbox("X-axis", numeric_cols, key="scatter_x")
+                            with col2:
+                                y_col = st.selectbox("Y-axis", [col for col in numeric_cols if col != x_col], key="scatter_y")
+                            with col3:
+                                color_col = st.selectbox("Color by (optional)", [None] + categorical_cols + numeric_cols, key="scatter_color")
+                            if x_col and y_col:
+                                fig_scatter = visualizer.create_scatter_plot(df, x_col, y_col, color_col)
+                                st.plotly_chart(fig_scatter, use_container_width=True)
+                            # Pairplot for selected columns
                             st.markdown("#### Pairplot Matrix")
                             selected_pair_cols = st.multiselect(
                                 "Select columns for pairplot", 
@@ -233,13 +218,12 @@ if selected_step == 0:
                                 default=numeric_cols[:min(4, len(numeric_cols))],
                                 key="pair_cols"
                             )
-                            
                             if len(selected_pair_cols) >= 2:
                                 fig_pair = visualizer.create_pairplot_matrix(df, selected_pair_cols)
                                 if fig_pair:
                                     st.plotly_chart(fig_pair, use_container_width=True)
-                    else:
-                        st.info("Need at least 2 numerical columns for relationship analysis")
+                        else:
+                            st.info("Need at least 2 numerical columns for relationship analysis")
                 
                 with viz_tab3:
                     st.markdown("### 📊 Categorical Analysis")

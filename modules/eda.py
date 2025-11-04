@@ -183,41 +183,41 @@ class EDAGenerator:
         return fig
     
     def create_distribution_plots(self, df: pd.DataFrame, columns: list) -> go.Figure:
-        """Create distribution plots for selected columns"""
-        n_cols = min(3, len(columns))
-        n_rows = (len(columns) + n_cols - 1) // n_cols
-        
-        fig = make_subplots(
-            rows=n_rows,
-            cols=n_cols,
-            subplot_titles=columns,
-            vertical_spacing=0.1
-        )
-        
+        """Create distribution plots for the given columns"""
+        n_cols = 2
+        n_rows = (len(columns) + 1) // n_cols
+
+        fig = make_subplots(rows=n_rows, cols=n_cols, subplot_titles=columns)
+
         for i, col in enumerate(columns):
             row = i // n_cols + 1
             col_pos = i % n_cols + 1
-            
+
+            # Numerical columns → Histogram
             if df[col].dtype in ['int64', 'float64']:
-                # Histogram for numerical columns
-                fig.add_trace(
-                    go.Histogram(x=df[col], name=col, showlegend=False),
-                    row=row, col=col_pos
-                )
+                clean_col = df[col].dropna()
+                if not clean_col.empty:
+                    fig.add_trace(
+                        go.Histogram(x=clean_col, name=col, showlegend=False),
+                        row=row, col=col_pos
+                    )
+
+            # Categorical columns → Bar chart
             else:
-                # Bar chart for categorical columns
-                value_counts = df[col].value_counts().head(10)
-                fig.add_trace(
-                    go.Bar(x=value_counts.index, y=value_counts.values, name=col, showlegend=False),
-                    row=row, col=col_pos
-                )
-        
+                value_counts = df[col].dropna().value_counts().head(10)
+                if not value_counts.empty:
+                    fig.add_trace(
+                        go.Bar(x=value_counts.index, y=value_counts.values, name=col, showlegend=False),
+                        row=row, col=col_pos
+                    )
+
         fig.update_layout(
-            title="Distribution Analysis",
-            height=300 * n_rows,
-            showlegend=False
+            height=400 * n_rows,
+            width=800,
+            title_text="Distribution Plots",
+            showlegend=True
         )
-        
+
         return fig
     
     def create_missing_values_plot(self, df: pd.DataFrame) -> go.Figure:
