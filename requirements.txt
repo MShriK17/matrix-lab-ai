@@ -1,6 +1,6 @@
 # --- Core App ---
 streamlit==1.36.0
-htmlmin>=0.1.12
+minify-html>=0.11.1
 rich<14,>=10.14.0
 markdown-it-py>=4.0.0
 mdurl>=0.1.2
