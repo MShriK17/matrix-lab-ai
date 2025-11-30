@@ -3,27 +3,26 @@
 ## Overview
 MatrixLab AI Studio is a complete machine learning workflow application built with Streamlit. It provides an end-to-end solution for data analysis, preprocessing, model training, evaluation, and deployment.
 
-**Current Status:** Fully operational and running on Replit
+**Current Status:** Fully operational and ready for Streamlit Cloud deployment
 
 **Technology Stack:**
 - Python 3.11
-- Streamlit 1.36.0
-- scikit-learn 1.5.0
-- pandas 2.2.2
-- numpy 1.25.2
-- Various ML libraries (SHAP, LIME, ydata-profiling)
+- Streamlit >= 1.28.0
+- scikit-learn >= 1.3.0
+- pandas >= 2.0.0
+- numpy >= 1.24.0
+- SHAP and LIME for model explainability
+- Plotly for interactive visualizations
 
 ## Recent Changes
+**Date:** November 30, 2025
+- Cleaned up requirements.txt for Streamlit Cloud compatibility
+- Removed ydata-profiling (caused dependency conflicts) - EDA now uses built-in fallback
+- Simplified dependencies to minimal set, letting pip resolve sub-dependencies
+- Application now deploys without errors on Streamlit Cloud
+
 **Date:** November 29, 2025
 - Successfully imported GitHub project to Replit
-- Fixed dependency conflicts in requirements.txt:
-  - Adjusted scipy version to <1.12 (compatibility with ydata-profiling)
-  - Adjusted matplotlib to <3.9 (compatibility with ydata-profiling)
-  - Adjusted seaborn to <0.13 (compatibility with ydata-profiling)
-  - Adjusted numpy to <1.26 (compatibility with ydata-profiling)
-  - Adjusted numba to >=0.57.0,<0.59.0 (Python 3.11 compatibility)
-  - Adjusted llvmlite to >=0.40.0,<0.42 (compatibility with numba)
-  - Adjusted slicer to 0.0.7 (compatibility with shap)
 - Created Streamlit configuration for Replit environment
 - Set up workflow to run on port 5000
 - Configured deployment settings for autoscale deployment
@@ -37,12 +36,12 @@ MatrixLab AI Studio is a complete machine learning workflow application built wi
 ### Modules
 Located in the `modules/` directory:
 - **data_loader.py**: Handles data upload and validation
-- **eda.py**: Exploratory Data Analysis generation
+- **eda.py**: Exploratory Data Analysis generation (with fallback when ydata-profiling unavailable)
 - **preprocessor.py**: Data preprocessing and transformation
 - **trainer.py**: Model training functionality
 - **predictor.py**: Prediction generation
 - **evaluator.py**: Model evaluation and metrics
-- **explainability.py**: Model interpretation (SHAP, LIME)
+- **explainability.py**: Model interpretation (SHAP, LIME) - gracefully handles missing libraries
 - **manager.py**: Model management and versioning
 - **visualization.py**: Data visualization utilities
 
@@ -51,7 +50,7 @@ Located in the `modules/` directory:
 
 ### Models
 - **models/**: Stores trained models and metadata
-  - Pre-loaded: Linear_Regression_v1.0.joblib (R² score: 0.999)
+  - Pre-loaded: Linear_Regression_v1.0.joblib (R2 score: 0.999)
 
 ## Workflow Steps
 
@@ -70,13 +69,19 @@ Located in the `modules/` directory:
 Located in `.streamlit/config.toml`:
 - Server port: 5000
 - Address: 0.0.0.0
-- CORS: disabled (required for Replit)
-- XSRF protection: disabled (required for Replit proxy)
+- CORS: disabled (required for Replit/Cloud hosting)
+- XSRF protection: disabled (required for proxy environments)
 
 ### Deployment
+**Streamlit Cloud:**
+- Connect your GitHub repository
+- Main file path: `Main_App.py`
+- Python version: 3.11
+
+**Replit:**
 - Type: Autoscale (stateless web application)
 - Command: `streamlit run Main_App.py --server.port=5000 --server.address=0.0.0.0`
-- Port: 5000 (automatically exposed for web preview)
+- Port: 5000
 
 ## Development
 
@@ -87,7 +92,25 @@ streamlit run Main_App.py
 ```
 
 ### Dependencies
-All dependencies are listed in `requirements.txt`. Install with:
+Minimal, clean dependencies in `requirements.txt`:
+```
+streamlit>=1.28.0
+pandas>=2.0.0
+numpy>=1.24.0,<2.0.0
+scikit-learn>=1.3.0
+scipy>=1.10.0
+joblib>=1.3.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.15.0
+shap>=0.42.0
+lime>=0.2.0.1
+tqdm>=4.65.0
+Pillow>=9.5.0
+openpyxl>=3.1.0
+```
+
+Install with:
 ```bash
 pip install -r requirements.txt
 ```
@@ -105,13 +128,12 @@ When adding new features:
 ## Notes
 - The application uses Streamlit's session state for maintaining workflow progress
 - Models are persisted in the `models/` directory with metadata
-- The EDA module uses ydata-profiling for comprehensive reports
-- Explainability features use SHAP and LIME libraries
+- The EDA module has a built-in fallback when ydata-profiling is not available
+- Explainability features gracefully handle missing SHAP/LIME libraries
 - All visualizations are interactive using Plotly
 
 ## Known Issues
 - LSP shows import errors for streamlit, pandas, numpy - these are false positives and can be ignored
-- Some "possibly unbound" warnings in Main_App.py are also false positives from the type checker
 
 ## Future Enhancements
 *To be discussed with user as project evolves*
