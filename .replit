@@ -21,21 +21,17 @@ args = "MatrixLab AI Studio"
 name = "MatrixLab AI Studio"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "streamlit run Main_App.py"
-waitForPort = 5000
-
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "streamlit run Main_App.py --server.port=5000 --server.address=0.0.0.0"
+waitForPort = 5000
 
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 33509
-externalPort = 3000
 
 [deployment]
 deploymentTarget = "autoscale"

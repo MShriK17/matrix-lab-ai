@@ -67,10 +67,10 @@ Located in the `modules/` directory:
 
 ### Streamlit Settings
 Located in `.streamlit/config.toml`:
-- Server port: 5000
 - Address: 0.0.0.0
 - CORS: disabled (required for Replit/Cloud hosting)
 - XSRF protection: disabled (required for proxy environments)
+- Port: NOT set in config (uses default 8501 for Streamlit Cloud, overridden via command-line for Replit)
 
 ### Deployment
 **Streamlit Cloud:**
